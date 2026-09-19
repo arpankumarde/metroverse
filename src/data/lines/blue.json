@@ -1,0 +1,465 @@
+{
+  "id": "blue_line",
+  "name": "Blue Line",
+  "lineNumber": 3,
+  "color": "#0078C8",
+  "operator": "DMRC",
+  "route": {
+    "start": "Dwarka Sector 21",
+    "end": "Noida Electronic City",
+    "stationCount": 50,
+    "lengthKm": 56.114,
+    "stations": [
+      {
+        "sequence": 1,
+        "id": "dwarka_sector_21",
+        "name": "Dwarka Sector 21",
+        "type": "elevated",
+        "isTerminal": true,
+        "previous": null,
+        "next": "dwarka_sector_8"
+      },
+      {
+        "sequence": 2,
+        "id": "dwarka_sector_8",
+        "name": "Dwarka Sector 8",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_21",
+        "next": "dwarka_sector_9"
+      },
+      {
+        "sequence": 3,
+        "id": "dwarka_sector_9",
+        "name": "Dwarka Sector 9",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_8",
+        "next": "dwarka_sector_10"
+      },
+      {
+        "sequence": 4,
+        "id": "dwarka_sector_10",
+        "name": "Dwarka Sector 10",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_9",
+        "next": "dwarka_sector_11"
+      },
+      {
+        "sequence": 5,
+        "id": "dwarka_sector_11",
+        "name": "Dwarka Sector 11",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_10",
+        "next": "dwarka_sector_12"
+      },
+      {
+        "sequence": 6,
+        "id": "dwarka_sector_12",
+        "name": "Dwarka Sector 12",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_11",
+        "next": "dwarka_sector_13"
+      },
+      {
+        "sequence": 7,
+        "id": "dwarka_sector_13",
+        "name": "Dwarka Sector 13",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_12",
+        "next": "dwarka_sector_14"
+      },
+      {
+        "sequence": 8,
+        "id": "dwarka_sector_14",
+        "name": "Dwarka Sector 14",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_13",
+        "next": "dwarka"
+      },
+      {
+        "sequence": 9,
+        "id": "dwarka",
+        "name": "Dwarka",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_sector_14",
+        "next": "dwarka_mor"
+      },
+      {
+        "sequence": 10,
+        "id": "dwarka_mor",
+        "name": "Dwarka Mor",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka",
+        "next": "nawada"
+      },
+      {
+        "sequence": 11,
+        "id": "nawada",
+        "name": "Nawada",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "dwarka_mor",
+        "next": "uttam_nagar_west"
+      },
+      {
+        "sequence": 12,
+        "id": "uttam_nagar_west",
+        "name": "Uttam Nagar West",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "nawada",
+        "next": "uttam_nagar_east"
+      },
+      {
+        "sequence": 13,
+        "id": "uttam_nagar_east",
+        "name": "Uttam Nagar East",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "uttam_nagar_west",
+        "next": "janakpuri_east"
+      },
+      {
+        "sequence": 14,
+        "id": "janakpuri_east",
+        "name": "Janakpuri East",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "uttam_nagar_east",
+        "next": "janakpuri_west"
+      },
+      {
+        "sequence": 15,
+        "id": "janakpuri_west",
+        "name": "Janakpuri West",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "janakpuri_east",
+        "next": "tilak_nagar"
+      },
+      {
+        "sequence": 16,
+        "id": "tilak_nagar",
+        "name": "Tilak Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "janakpuri_west",
+        "next": "subhash_nagar"
+      },
+      {
+        "sequence": 17,
+        "id": "subhash_nagar",
+        "name": "Subhash Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "tilak_nagar",
+        "next": "tagore_garden"
+      },
+      {
+        "sequence": 18,
+        "id": "tagore_garden",
+        "name": "Tagore Garden",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "subhash_nagar",
+        "next": "rajouri_garden"
+      },
+      {
+        "sequence": 19,
+        "id": "rajouri_garden",
+        "name": "Rajouri Garden",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "tagore_garden",
+        "next": "ramesh_nagar"
+      },
+      {
+        "sequence": 20,
+        "id": "ramesh_nagar",
+        "name": "Ramesh Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "rajouri_garden",
+        "next": "moti_nagar"
+      },
+      {
+        "sequence": 21,
+        "id": "moti_nagar",
+        "name": "Moti Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "ramesh_nagar",
+        "next": "kirti_nagar"
+      },
+      {
+        "sequence": 22,
+        "id": "kirti_nagar",
+        "name": "Kirti Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "moti_nagar",
+        "next": "shadipur"
+      },
+      {
+        "sequence": 23,
+        "id": "shadipur",
+        "name": "Shadipur",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "kirti_nagar",
+        "next": "patel_nagar"
+      },
+      {
+        "sequence": 24,
+        "id": "patel_nagar",
+        "name": "Patel Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "shadipur",
+        "next": "rajendra_place"
+      },
+      {
+        "sequence": 25,
+        "id": "rajendra_place",
+        "name": "Rajendra Place",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "patel_nagar",
+        "next": "karol_bagh"
+      },
+      {
+        "sequence": 26,
+        "id": "karol_bagh",
+        "name": "Karol Bagh",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "rajendra_place",
+        "next": "jhandewalan"
+      },
+      {
+        "sequence": 27,
+        "id": "jhandewalan",
+        "name": "Jhandewalan",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "karol_bagh",
+        "next": "rk_ashram_marg"
+      },
+      {
+        "sequence": 28,
+        "id": "rk_ashram_marg",
+        "name": "Ramakrishna Ashram Marg",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "jhandewalan",
+        "next": "rajiv_chowk"
+      },
+      {
+        "sequence": 29,
+        "id": "rajiv_chowk",
+        "name": "Rajiv Chowk",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "rk_ashram_marg",
+        "next": "barakhamba_road"
+      },
+      {
+        "sequence": 30,
+        "id": "barakhamba_road",
+        "name": "Barakhamba Road",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "rajiv_chowk",
+        "next": "mandi_house"
+      },
+      {
+        "sequence": 31,
+        "id": "mandi_house",
+        "name": "Mandi House",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "barakhamba_road",
+        "next": "supreme_court"
+      },
+      {
+        "sequence": 32,
+        "id": "supreme_court",
+        "name": "Supreme Court",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "mandi_house",
+        "next": "indraprastha"
+      },
+      {
+        "sequence": 33,
+        "id": "indraprastha",
+        "name": "Indraprastha",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "supreme_court",
+        "next": "yamuna_bank"
+      },
+      {
+        "sequence": 34,
+        "id": "yamuna_bank",
+        "name": "Yamuna Bank",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "indraprastha",
+        "next": "akshardham"
+      },
+      {
+        "sequence": 35,
+        "id": "akshardham",
+        "name": "Akshardham",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "yamuna_bank",
+        "next": "mayur_vihar_1"
+      },
+      {
+        "sequence": 36,
+        "id": "mayur_vihar_1",
+        "name": "Mayur Vihar-I",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "akshardham",
+        "next": "mayur_vihar_extension"
+      },
+      {
+        "sequence": 37,
+        "id": "mayur_vihar_extension",
+        "name": "Mayur Vihar Extension",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "mayur_vihar_1",
+        "next": "new_ashok_nagar"
+      },
+      {
+        "sequence": 38,
+        "id": "new_ashok_nagar",
+        "name": "New Ashok Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "mayur_vihar_extension",
+        "next": "noida_sector_15"
+      },
+      {
+        "sequence": 39,
+        "id": "noida_sector_15",
+        "name": "Noida Sector 15",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "new_ashok_nagar",
+        "next": "noida_sector_16"
+      },
+      {
+        "sequence": 40,
+        "id": "noida_sector_16",
+        "name": "Noida Sector 16",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_15",
+        "next": "noida_sector_18"
+      },
+      {
+        "sequence": 41,
+        "id": "noida_sector_18",
+        "name": "Noida Sector 18",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_16",
+        "next": "botanical_garden"
+      },
+      {
+        "sequence": 42,
+        "id": "botanical_garden",
+        "name": "Botanical Garden",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_18",
+        "next": "golf_course"
+      },
+      {
+        "sequence": 43,
+        "id": "golf_course",
+        "name": "Golf Course",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "botanical_garden",
+        "next": "noida_city_centre"
+      },
+      {
+        "sequence": 44,
+        "id": "noida_city_centre",
+        "name": "Noida City Centre",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "golf_course",
+        "next": "noida_sector_34"
+      },
+      {
+        "sequence": 45,
+        "id": "noida_sector_34",
+        "name": "Noida Sector 34",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_city_centre",
+        "next": "noida_sector_52"
+      },
+      {
+        "sequence": 46,
+        "id": "noida_sector_52",
+        "name": "Noida Sector 52",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_34",
+        "next": "noida_sector_61"
+      },
+      {
+        "sequence": 47,
+        "id": "noida_sector_61",
+        "name": "Noida Sector 61",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_52",
+        "next": "noida_sector_59"
+      },
+      {
+        "sequence": 48,
+        "id": "noida_sector_59",
+        "name": "Noida Sector 59",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_61",
+        "next": "noida_sector_62"
+      },
+      {
+        "sequence": 49,
+        "id": "noida_sector_62",
+        "name": "Noida Sector 62",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "noida_sector_59",
+        "next": "noida_electronic_city"
+      },
+      {
+        "sequence": 50,
+        "id": "noida_electronic_city",
+        "name": "Noida Electronic City",
+        "type": "elevated",
+        "isTerminal": true,
+        "previous": "noida_sector_62",
+        "next": null
+      }
+    ]
+  }
+}

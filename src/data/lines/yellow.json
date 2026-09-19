@@ -1,0 +1,348 @@
+{
+  "id": "yellow_line",
+  "name": "Yellow Line",
+  "lineNumber": 2,
+  "color": "#FFD700",
+  "operator": "DMRC",
+  "route": {
+    "start": "Samaypur Badli",
+    "end": "Millennium City Centre Gurugram",
+    "stationCount": 37,
+    "lengthKm": 49.019,
+    "stations": [
+      {
+        "sequence": 1,
+        "id": "samaypur_badli",
+        "name": "Samaypur Badli",
+        "type": "elevated",
+        "isTerminal": true,
+        "previous": null,
+        "next": "rohini_sector_18_19"
+      },
+      {
+        "sequence": 2,
+        "id": "rohini_sector_18_19",
+        "name": "Rohini Sector 18, 19",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "samaypur_badli",
+        "next": "haiderpur_badli_mor"
+      },
+      {
+        "sequence": 3,
+        "id": "haiderpur_badli_mor",
+        "name": "Haiderpur Badli Mor",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "rohini_sector_18_19",
+        "next": "jahangirpuri"
+      },
+      {
+        "sequence": 4,
+        "id": "jahangirpuri",
+        "name": "Jahangirpuri",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "haiderpur_badli_mor",
+        "next": "adarsh_nagar"
+      },
+      {
+        "sequence": 5,
+        "id": "adarsh_nagar",
+        "name": "Adarsh Nagar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "jahangirpuri",
+        "next": "azadpur"
+      },
+      {
+        "sequence": 6,
+        "id": "azadpur",
+        "name": "Azadpur",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "adarsh_nagar",
+        "next": "model_town"
+      },
+      {
+        "sequence": 7,
+        "id": "model_town",
+        "name": "Model Town",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "azadpur",
+        "next": "gtb_nagar"
+      },
+      {
+        "sequence": 8,
+        "id": "gtb_nagar",
+        "name": "GTB Nagar",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "model_town",
+        "next": "vishwavidyalaya"
+      },
+      {
+        "sequence": 9,
+        "id": "vishwavidyalaya",
+        "name": "Vishwavidyalaya",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "gtb_nagar",
+        "next": "vidhan_sabha"
+      },
+      {
+        "sequence": 10,
+        "id": "vidhan_sabha",
+        "name": "Vidhan Sabha",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "vishwavidyalaya",
+        "next": "civil_lines"
+      },
+      {
+        "sequence": 11,
+        "id": "civil_lines",
+        "name": "Civil Lines",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "vidhan_sabha",
+        "next": "kashmere_gate"
+      },
+      {
+        "sequence": 12,
+        "id": "kashmere_gate",
+        "name": "Kashmere Gate",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "civil_lines",
+        "next": "chandni_chowk"
+      },
+      {
+        "sequence": 13,
+        "id": "chandni_chowk",
+        "name": "Chandni Chowk",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "kashmere_gate",
+        "next": "chawri_bazar"
+      },
+      {
+        "sequence": 14,
+        "id": "chawri_bazar",
+        "name": "Chawri Bazar",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "chandni_chowk",
+        "next": "new_delhi"
+      },
+      {
+        "sequence": 15,
+        "id": "new_delhi",
+        "name": "New Delhi",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "chawri_bazar",
+        "next": "rajiv_chowk"
+      },
+      {
+        "sequence": 16,
+        "id": "rajiv_chowk",
+        "name": "Rajiv Chowk",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "new_delhi",
+        "next": "patel_chowk"
+      },
+      {
+        "sequence": 17,
+        "id": "patel_chowk",
+        "name": "Patel Chowk",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "rajiv_chowk",
+        "next": "central_secretariat"
+      },
+      {
+        "sequence": 18,
+        "id": "central_secretariat",
+        "name": "Central Secretariat",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "patel_chowk",
+        "next": "udyog_bhawan"
+      },
+      {
+        "sequence": 19,
+        "id": "udyog_bhawan",
+        "name": "Udyog Bhawan",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "central_secretariat",
+        "next": "lok_kalyan_marg"
+      },
+      {
+        "sequence": 20,
+        "id": "lok_kalyan_marg",
+        "name": "Lok Kalyan Marg",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "udyog_bhawan",
+        "next": "jor_bagh"
+      },
+      {
+        "sequence": 21,
+        "id": "jor_bagh",
+        "name": "Jor Bagh",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "lok_kalyan_marg",
+        "next": "ina"
+      },
+      {
+        "sequence": 22,
+        "id": "ina",
+        "name": "INA",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "jor_bagh",
+        "next": "aiims"
+      },
+      {
+        "sequence": 23,
+        "id": "aiims",
+        "name": "AIIMS",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "ina",
+        "next": "green_park"
+      },
+      {
+        "sequence": 24,
+        "id": "green_park",
+        "name": "Green Park",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "aiims",
+        "next": "hauz_khas"
+      },
+      {
+        "sequence": 25,
+        "id": "hauz_khas",
+        "name": "Hauz Khas",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "green_park",
+        "next": "malviya_nagar"
+      },
+      {
+        "sequence": 26,
+        "id": "malviya_nagar",
+        "name": "Malviya Nagar",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "hauz_khas",
+        "next": "saket"
+      },
+      {
+        "sequence": 27,
+        "id": "saket",
+        "name": "Saket",
+        "type": "underground",
+        "isTerminal": false,
+        "previous": "malviya_nagar",
+        "next": "qutab_minar"
+      },
+      {
+        "sequence": 28,
+        "id": "qutab_minar",
+        "name": "Qutab Minar",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "saket",
+        "next": "chhatarpur"
+      },
+      {
+        "sequence": 29,
+        "id": "chhatarpur",
+        "name": "Chhatarpur",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "qutab_minar",
+        "next": "sultanpur"
+      },
+      {
+        "sequence": 30,
+        "id": "sultanpur",
+        "name": "Sultanpur",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "chhatarpur",
+        "next": "ghitorni"
+      },
+      {
+        "sequence": 31,
+        "id": "ghitorni",
+        "name": "Ghitorni",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "sultanpur",
+        "next": "arjan_garh"
+      },
+      {
+        "sequence": 32,
+        "id": "arjan_garh",
+        "name": "Arjan Garh",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "ghitorni",
+        "next": "guru_dronacharya"
+      },
+      {
+        "sequence": 33,
+        "id": "guru_dronacharya",
+        "name": "Guru Dronacharya",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "arjan_garh",
+        "next": "sikanderpur"
+      },
+      {
+        "sequence": 34,
+        "id": "sikanderpur",
+        "name": "Sikanderpur",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "guru_dronacharya",
+        "next": "mg_road"
+      },
+      {
+        "sequence": 35,
+        "id": "mg_road",
+        "name": "MG Road",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "sikanderpur",
+        "next": "iffco_chowk"
+      },
+      {
+        "sequence": 36,
+        "id": "iffco_chowk",
+        "name": "IFFCO Chowk",
+        "type": "elevated",
+        "isTerminal": false,
+        "previous": "mg_road",
+        "next": "millennium_city_centre"
+      },
+      {
+        "sequence": 37,
+        "id": "millennium_city_centre",
+        "name": "Millennium City Centre Gurugram",
+        "type": "elevated",
+        "isTerminal": true,
+        "previous": "iffco_chowk",
+        "next": null
+      }
+    ]
+  }
+}
