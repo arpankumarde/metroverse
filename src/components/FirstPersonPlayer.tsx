@@ -3,7 +3,14 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Euler, MathUtils } from 'three'
 import { useDragLook } from '../systems/useDragLook'
 import { useMoveInput } from '../systems/useMoveInput'
-import { areaAt, floorHeight, resolveWalk, type WalkFrame, type WalkVolume } from '../systems/walk'
+import {
+  areaAt,
+  floorHeight,
+  resolveWalk,
+  type WalkArea,
+  type WalkFrame,
+  type WalkVolume,
+} from '../systems/walk'
 
 /** Standing eye height above whatever the player's feet are on, in metres. */
 export const EYE_HEIGHT = 1.65
@@ -75,6 +82,13 @@ const orientation = new Euler(0, 0, 0, 'YXZ')
  * worked out. Boarding and alighting need no mode of their own — they are
  * what happens when a step lands on rectangles belonging to a different frame
  * (PLAN.md §5).
+ *
+ * Floors are not all level, or all one storey. The player remembers the height
+ * their feet are at, so a floor overhead is not mistaken for the one under
+ * them, and follows the floor's height as it falls away along a staircase or
+ * an escalator. Some floors also move or slow them: an escalator carries
+ * whoever is standing on it, on top of their own walking, and a staircase is
+ * not run up.
  */
 export function FirstPersonPlayer({
   volume,
@@ -89,7 +103,18 @@ export function FirstPersonPlayer({
   const position = useRef({ x: spawn.x, z: spawn.z })
   const velocity = useRef({ x: 0, z: 0 })
   const spawnFloor = areaAt(volume, spawn.x, spawn.z, PLAYER_RADIUS)
-  const floorY = useRef(spawnFloor ? floorHeight(spawnFloor) : 0)
+  const spawnHeight = spawnFloor ? floorHeight(spawnFloor, spawn.x) : null
+  const floorY = useRef(spawnHeight ?? 0)
+
+  /**
+   * Where their feet are, exactly. `floorY` is what the eye is eased towards;
+   * this is what the walk is asked about, and it must not lag behind the floor
+   * on a steep flight.
+   */
+  const level = useRef<number | null>(spawnHeight)
+
+  /** The floor they stood on last frame: what is carrying them, or slowing them. */
+  const standing = useRef<WalkArea | null>(spawnFloor)
 
   /** Distance walked, in steps, driving the bob. */
   const stride = useRef(0)
@@ -125,7 +150,15 @@ export function FirstPersonPlayer({
       dirZ /= length
     }
 
-    const speed = sprint ? SPRINT_SPEED : WALK_SPEED
+    const underfoot = standing.current
+    const speed = (sprint ? SPRINT_SPEED : WALK_SPEED) * (underfoot?.pace ?? 1)
+
+    // A moving floor takes them along, and is not walking: it is added to the
+    // step and taken off again afterwards, so it neither builds up speed nor
+    // shows in the head bob.
+    const beltX = underfoot?.belt?.x ?? 0
+    const beltZ = underfoot?.belt?.z ?? 0
+
     const ease = 1 - Math.exp(-ACCELERATION * step)
     velocity.current.x = MathUtils.lerp(velocity.current.x, dirX * speed, ease)
     velocity.current.z = MathUtils.lerp(velocity.current.z, dirZ * speed, ease)
@@ -148,22 +181,26 @@ export function FirstPersonPlayer({
       volume,
       from.x,
       from.z,
-      from.x + velocity.current.x * step,
-      from.z + velocity.current.z * step,
+      from.x + (velocity.current.x + beltX) * step,
+      from.z + (velocity.current.z + beltZ) * step,
       PLAYER_RADIUS,
+      level.current,
     )
 
     // Take the velocity back from the distance actually covered, so a blocked
     // axis stops dead instead of building up a shove against the wall.
-    velocity.current.x = (walked.x - from.x) / step
-    velocity.current.z = (walked.z - from.z) / step
+    velocity.current.x = (walked.x - from.x) / step - beltX
+    velocity.current.z = (walked.z - from.z) / step - beltZ
     from.x = walked.x
     from.z = walked.z
 
     if (walked.area) {
+      const height = floorHeight(walked.area, from.x)
+      level.current = height
+      standing.current = walked.area
       floorY.current = MathUtils.lerp(
         floorY.current,
-        floorHeight(walked.area),
+        height,
         1 - Math.exp(-FLOOR_SMOOTHING * step),
       )
     }

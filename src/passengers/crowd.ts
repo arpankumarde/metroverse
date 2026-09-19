@@ -465,7 +465,7 @@ function replenish(crowd: CrowdSim, platform: PlatformCrowd, delta: number): voi
   platform.nextArrival = ARRIVAL_GAP * (0.55 + crowd.random())
   if (platform.expected >= PLATFORM_TARGET) return
 
-  const gates = platform.stances.gates
+  const gates = platform.stances.gates.filter((candidate) => candidate.up)
   const gate = gates[Math.floor(crowd.random() * gates.length)]
   if (!gate) return
 
@@ -491,7 +491,7 @@ function replenish(crowd: CrowdSim, platform: PlatformCrowd, delta: number): voi
   person.seated = false
   person.seatY = 0
 
-  setPath(person, gate.x, gate.z, spot.x, spot.z)
+  setPath(person, gate.x, gate.z, gate.x, gate.clearZ, spot.x, spot.z)
 }
 
 /* ---------------------------------------------------------------- trains */
@@ -905,7 +905,7 @@ function arrive(crowd: CrowdSim, person: Passenger): void {
       person.leaving = true
 
       const gate = nearestGate(person)
-      if (gate) setPath(person, gate.x, gate.z)
+      if (gate) setPath(person, gate.x, gate.clearZ, gate.x, gate.z)
       return
     }
 
@@ -914,9 +914,9 @@ function arrive(crowd: CrowdSim, person: Passenger): void {
   }
 }
 
-/** The way off the platform they are nearest to. */
+/** The way down off the platform they are nearest to. */
 function nearestGate(person: Passenger) {
-  const gates = person.platform?.stances.gates
+  const gates = person.platform?.stances.gates.filter((candidate) => candidate.down)
   if (!gates || gates.length === 0) return null
 
   let best = gates[0] ?? null

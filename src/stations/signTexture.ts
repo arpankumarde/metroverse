@@ -239,3 +239,75 @@ export function platformNumberTexture(number: string, lineColor: string): Canvas
     centeredText(ctx, number, LATIN_FONT, 150, w / 2, h / 2 + 6, w - 60)
   })
 }
+
+/**
+ * The board hung in the concourse over the way up to a platform: the platform's
+ * number in the line's colour, where its trains are bound, and an arrow up.
+ */
+export function platformDirectionTexture(
+  number: string,
+  towards: BilingualName,
+  lineColor: string,
+): CanvasTexture {
+  return signTexture(`direction:${number}:${towards.en}:${lineColor}`, 1152, 288, (ctx, w, h) => {
+    ctx.fillStyle = '#1b2733'
+    ctx.fillRect(0, 0, w, h)
+
+    // Platform number, in the colour of the line it serves.
+    ctx.fillStyle = shade(lineColor, 0.72)
+    ctx.fillRect(24, 24, h - 48, h - 48)
+    ctx.strokeStyle = '#ffffff'
+    ctx.lineWidth = 6
+    ctx.strokeRect(34, 34, h - 68, h - 68)
+    ctx.fillStyle = '#ffffff'
+    centeredText(ctx, number, LATIN_FONT, 150, h / 2, h / 2 + 6, h - 100)
+
+    const left = h + 24
+    ctx.fillStyle = '#ffffff'
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'middle'
+    ctx.font = `62px ${HINDI_FONT}`
+    ctx.fillText(`प्लेटफॉर्म ${number}  ·  ${towards.hi}`, left, h * 0.3, w - left - 200)
+    ctx.font = `56px ${LATIN_FONT}`
+    ctx.fillText(`Platform ${number}  ·  ${towards.en}`, left, h * 0.7, w - left - 200)
+
+    // A green tile with an up arrow at the far end: the way is up from here.
+    ctx.fillStyle = '#14803c'
+    ctx.fillRect(w - 176, 24, 152, h - 48)
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.moveTo(w - 100, 60)
+    ctx.lineTo(w - 44, 130)
+    ctx.lineTo(w - 82, 130)
+    ctx.lineTo(w - 82, 228)
+    ctx.lineTo(w - 118, 228)
+    ctx.lineTo(w - 118, 130)
+    ctx.lineTo(w - 156, 130)
+    ctx.closePath()
+    ctx.fill()
+  })
+}
+
+/**
+ * The direction lamp at either end of an escalator: a green arrow on a dark
+ * tile. It is drawn pointing up the texture, and turned on the comb plate to
+ * point the way the steps are going.
+ */
+export function escalatorArrowTexture(): CanvasTexture {
+  return signTexture('escalator-arrow', 256, 256, (ctx, w, h) => {
+    ctx.fillStyle = '#12181e'
+    ctx.fillRect(0, 0, w, h)
+
+    ctx.fillStyle = '#2ecc71'
+    ctx.beginPath()
+    ctx.moveTo(w / 2, 26)
+    ctx.lineTo(w - 42, 130)
+    ctx.lineTo(w / 2 + 34, 130)
+    ctx.lineTo(w / 2 + 34, h - 28)
+    ctx.lineTo(w / 2 - 34, h - 28)
+    ctx.lineTo(w / 2 - 34, 130)
+    ctx.lineTo(42, 130)
+    ctx.closePath()
+    ctx.fill()
+  })
+}

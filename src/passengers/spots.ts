@@ -1,3 +1,4 @@
+import { Travel } from '../data/access'
 import type { PlatformConfig, RollingStockConfig, TrackConfig } from '../data/types'
 import { accessLayouts } from '../stations/accessGeometry'
 import { BENCH_LENGTH, BENCH_SEAT_Y, platformFittings } from '../stations/fittings'
@@ -209,6 +210,20 @@ export interface Gate {
   /** The point out over the opening they rise from, and sink back into. */
   fromX: number
   fromZ: number
+  /**
+   * Z of the open standing area in front of the flights, where a route to or
+   * from the gate can run without crossing any of their openings. Flights sit
+   * side by side, so a straight line from one to the far side of the deck can
+   * otherwise go straight over the next one.
+   */
+  clearZ: number
+  /**
+   * Which way it can be used. People come up from the concourse by a stair or an
+   * up escalator and go down by a stair or a down escalator; nobody rises out of
+   * the head of an escalator that is carrying people the other way.
+   */
+  up: boolean
+  down: boolean
 }
 
 export interface PlatformStances {
@@ -239,6 +254,9 @@ const GATE_STANDOFF = 0.95
 
 /** And how far out over the opening they are while still on the way up. */
 const GATE_REACH = 1.2
+
+/** How far short of the nearest flight's opening the clear route runs. */
+const GATE_CLEARANCE = 1
 
 /** Is there room for a person here, clear of everything bolted to the deck? */
 function clearOf(obstacles: readonly WalkObstacle[], x: number, z: number): boolean {
@@ -323,11 +341,20 @@ export function platformStances(
     }
   }
 
-  const gates = accessLayouts(platform, track).map((layout) => ({
+  const layouts = accessLayouts(platform, track)
+  const nearestOpening = Math.min(
+    ...layouts.map((layout) => Math.abs(layout.centerZ - edgeZ) - layout.halfWidth),
+  )
+  const clearZ = edgeZ + sideSign * (nearestOpening - GATE_CLEARANCE)
+
+  const gates = layouts.map((layout) => ({
     x: x + layout.headX - layout.descent * GATE_STANDOFF,
     z: layout.centerZ,
     fromX: x + layout.headX + layout.descent * GATE_REACH,
     fromZ: layout.centerZ,
+    clearZ,
+    up: layout.travel !== Travel.DOWN,
+    down: layout.travel !== Travel.UP,
   }))
 
   return { stances, berth, deckY, gates }

@@ -1,5 +1,6 @@
 import type { MetroLine, StationConfig, TrackConfig } from '../data/types'
 import { Canopy } from './Canopy'
+import { Concourse } from './Concourse'
 import { Furniture } from './Furniture'
 import { Platform } from './Platform'
 import { Signage } from './Signage'
@@ -20,9 +21,10 @@ interface StationProps {
  * names (PLAN.md §9, §33).
  *
  * Platforms, the barrel-vault canopy, platform furniture and signage — the
- * whole of PLAN.md §8 bar the passengers, which are their own system. The
- * running lines are not here: they belong to the corridor, because they carry
- * on through to the next station.
+ * whole of PLAN.md §8 bar the passengers, which are their own system — and the
+ * concourse under the platforms that the staircases and escalators come down
+ * to. The running lines are not here: they belong to the corridor, because
+ * they carry on through to the next station.
  *
  * Everything is drawn about the station's own origin, so the station is put on
  * the line by the single group transform its caller wraps it in.
@@ -41,6 +43,8 @@ export function Station({ station, tracks, line }: StationProps) {
           </group>
         )
       })}
+
+      <Concourse station={station} tracks={tracks} line={line} />
 
       {/* The vault springs from outside the platforms, so its columns stand
           on the structural deck rather than on the platform decks. */}

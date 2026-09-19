@@ -1,5 +1,4 @@
 import { NearCamera } from '../components/NearCamera'
-import { corridorAlignment } from '../data/alignment'
 import { BLUE_CORRIDOR, corridorEnd, corridorStart } from '../data/corridor'
 import { BLUE_LINE } from '../data/lines'
 import { DMRC_STANDARD_GAUGE } from '../data/rollingStock'
@@ -14,8 +13,7 @@ import { TrainService } from '../train/TrainService'
 import { City } from '../world/City'
 import { Daylight, GROUND_Y } from '../world/Daylight'
 import { Tunnel } from '../world/Tunnel'
-import { tunnelStretches } from '../world/tunnelGeometry'
-import { SERVICE } from './blueLine'
+import { ALIGNMENT, COVERED, DECK_CUTS, SERVICE } from './blueLine'
 
 /**
  * The built stretch of the Blue Line: Rajiv Chowk out to Yamuna Bank, with a
@@ -38,11 +36,6 @@ import { SERVICE } from './blueLine'
  * under the viaduct, its traffic and its trees, and the frontage either side
  * of it, named where the real buildings are named.
  */
-const ALIGNMENT = corridorAlignment(BLUE_CORRIDOR)
-
-/** Where the line runs covered, worked out once from the alignment. */
-const COVERED = tunnelStretches(BLUE_CORRIDOR, ALIGNMENT)
-
 export function LineScene() {
   const first = BLUE_CORRIDOR.stations[0]
   const halfWidth = first ? stationHalfWidth(first.station, BLUE_CORRIDOR.tracks) : 0
@@ -60,6 +53,7 @@ export function LineScene() {
         groundY={GROUND_Y}
         alignment={ALIGNMENT}
         covered={COVERED}
+        cuts={DECK_CUTS}
       />
 
       <Tunnel

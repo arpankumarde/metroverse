@@ -1,9 +1,15 @@
 import type { Vec3 } from '../components/InstancedParts'
-import { AccessKind, accessForPlatform, type VerticalAccessConfig } from '../data/access'
+import {
+  AccessKind,
+  ESCALATOR_SPEED,
+  Travel,
+  accessForPlatform,
+  type VerticalAccessConfig,
+} from '../data/access'
 import type { PlatformConfig, TrackConfig } from '../data/types'
 import type { WalkArea, WalkObstacle } from '../systems/walk'
-import { boxOver, rectBetweenZ, rectsAround, type Box, type Rect } from './deck'
-import { platformLayout } from './geometry'
+import { rectBetweenZ, rectsAround, type Rect } from './deck'
+import { TRACK_BASE_Y, platformLayout } from './geometry'
 
 /**
  * Staircases and escalators, resolved from their config into world geometry.
@@ -12,6 +18,11 @@ import { platformLayout } from './geometry'
  * knows nothing about materials, `VerticalAccess` draws it, and `walkable`
  * collides against the very same openings — so the hole the player sees and
  * the hole they can fall down are one hole (PLAN.md §12, §33).
+ *
+ * A flight is drawn and walked from the same numbers. The floor a player
+ * stands on falls at the gradient the steps are drawn at, and an escalator's
+ * belt carries them at the speed its steps are animated at, so what they see
+ * moving and what moves them cannot disagree.
  */
 
 /** Riser and going the step count is fitted to. Close to the DMRC public stair. */
@@ -19,13 +30,10 @@ const STAIR_RISER = 0.165
 const STAIR_GOING = 0.3
 
 /** Escalators are built to a fixed 30 degrees. */
-const ESCALATOR_ANGLE = Math.PI / 6
+export const ESCALATOR_ANGLE = Math.PI / 6
 
-/** Pitch of the cleats that read as escalator steps. */
-const CLEAT_PITCH = 0.4
-
-/** How far a tread block overlaps the one below, so the flight has no slots in it. */
-const STEP_OVERLAP = 0.03
+/** Pitch of the cleats that read as escalator steps, along the incline. */
+export const CLEAT_PITCH = 0.4
 
 /** How far the balustrade runs on past the head of the flight. */
 const HEAD_EXTENSION = 0.3
@@ -33,38 +41,93 @@ const HEAD_EXTENSION = 0.3
 /** Thickness of the balustrade panel standing along each side of a flight. */
 export const BALUSTRADE_THICKNESS = 0.09
 
-/** Slop so the shaft walls sit behind the slab rather than fighting with it. */
-const SHAFT_MARGIN = 0.35
+/**
+ * How much more than the flight itself the deck and the hall floor leave open
+ * across its width, so the balustrades stand in the hole and not on its lip.
+ */
+const WELL_MARGIN = 0.06
+
+/** Depth of the step band of an escalator, and the truss body under it. */
+const ESCALATOR_BAND = 0.2
+
+/** Clear height a person needs to pass under the platform slab, head included. */
+const HEADROOM = 1.75
+
+/** How much of full walking speed a person manages on each. Nobody runs stairs. */
+const STAIR_PACE = 0.7
+const ESCALATOR_PACE = 0.9
 
 export interface AccessLayout {
   id: string
   kind: AccessKind
+  travel: Travel
   /** The hole in the deck, in world coordinates. */
   opening: Rect
+  /**
+   * The whole flight in plan, from its head on the deck to its foot in the
+   * hall. Most of it is under the deck: the opening only has to be as long as
+   * it takes a person on the flight to duck under the slab.
+   */
+  footprint: Rect
+  /**
+   * The footprint with room either side for the balustrades: what the viaduct
+   * deck and the hall floor are cut back to around it.
+   */
+  well: Rect
   deckY: number
   landingY: number
   /** X of the top of the flight, i.e. the lip the player steps off. */
   headX: number
+  /** X of the foot of the flight, where it lands in the hall. */
+  toeX: number
   descent: 1 | -1
   centerZ: number
   halfWidth: number
-  /** Rotation about Z that lays an X-aligned part along the flight. */
-  slope: number
+  /** Height climbed, and the distance covered along X doing it. */
+  rise: number
+  run: number
+  /** Angle of the incline, and the rotation about Z that lays an X-aligned part along it. */
+  pitch: number
+  tilt: number
   /** Centre of the flight on its nosing line, and its length down the slope. */
   flightCenter: Vec3
   flightLength: number
   /** The same, extended past the head where the balustrade overruns. */
   railCenter: Vec3
   railLength: number
-  /** Tread blocks of a staircase; empty for an escalator. */
-  steps: Vec3[]
-  stepSize: Vec3
-  /** Step cleats of an escalator; empty for a staircase. */
-  cleats: Vec3[]
-  /** The unlit box below the deck that the flight descends into. */
-  shaft: Box
+  /** Riser and tread of a staircase; both are zero for an escalator. */
+  stepCount: number
+  riser: number
+  /** Centres of the safety nosings along a staircase; empty for an escalator. */
+  nosings: Vec3[]
+  /** How many moving steps an escalator carries along its length. */
+  cleatCount: number
+  /**
+   * The solid under the flight, as a profile in station-local X and Y, to be
+   * extruded across the flight's width. Tread by tread for a staircase, a plain
+   * wedge for an escalator's truss.
+   */
+  body: [number, number][]
   /** Guard rail across the far end of the opening, where the flight ducks under. */
   endRailCenter: Vec3
+  /** Speed of an escalator's steps along X, signed; zero for a staircase. */
+  beltX: number
+}
+
+/**
+ * The opening in the deck has to be long enough for somebody standing on the
+ * flight to have their head below the slab by the time it stops. A staircase
+ * or escalator moved or re-graded in the data that no longer clears is caught
+ * here, when the station is built, rather than found by walking into a ceiling.
+ */
+function checkHeadroom(config: VerticalAccessConfig, deckY: number, gradient: number, going: number) {
+  const needed = (deckY - (TRACK_BASE_Y - HEADROOM)) / gradient + going
+  if (config.length + 1e-6 < needed) {
+    throw new Error(
+      `${config.id}: opening is ${config.length} m long but a person needs ${needed.toFixed(2)} m ` +
+        'of it to clear the platform slab',
+    )
+  }
 }
 
 function layoutFor(
@@ -93,11 +156,14 @@ function layoutFor(
   const stepCount = Math.max(1, Math.round(rise / STAIR_RISER))
   const riser = rise / stepCount
   const run = stairs ? stepCount * STAIR_GOING : rise / Math.tan(ESCALATOR_ANGLE)
+  const toeX = headX + config.descent * run
+
+  checkHeadroom(config, deckY, rise / run, stairs ? STAIR_GOING : 0)
 
   // A box whose long axis is X is laid along the flight by this one rotation.
   // The box is symmetric, so descending towards -X is the same tilt mirrored.
   const pitch = Math.atan2(rise, run)
-  const slope = config.descent > 0 ? -pitch : pitch
+  const tilt = config.descent > 0 ? -pitch : pitch
 
   const flightLength = Math.hypot(run, rise)
   const flightCenter: Vec3 = [headX + config.descent * (run / 2), deckY - rise / 2, centerZ]
@@ -111,66 +177,111 @@ function layoutFor(
     centerZ,
   ]
 
-  // Each block hangs from its own nosing and overlaps the one below, so the
-  // flight reads as solid rather than as a stack of separated slabs.
-  const stepDepth = riser + STEP_OVERLAP
-  const steps: Vec3[] = stairs
-    ? Array.from({ length: stepCount }, (_, i) => [
-        headX + config.descent * (i + 0.5) * STAIR_GOING,
-        deckY - (i + 1) * riser - stepDepth / 2,
+  const footprint: Rect = rectBetweenZ(Math.min(headX, toeX), Math.max(headX, toeX), nearZ, farZ)
+  const well: Rect = {
+    ...footprint,
+    minZ: footprint.minZ - WELL_MARGIN,
+    maxZ: footprint.maxZ + WELL_MARGIN,
+  }
+
+  // Safety nosings sit on the leading edge of every tread but the last, which
+  // is the hall floor, and whose edge is the foot of the flight.
+  const nosings: Vec3[] = stairs
+    ? Array.from({ length: stepCount - 1 }, (_, i) => [
+        headX + config.descent * ((i + 1) * STAIR_GOING - 0.03),
+        deckY - (i + 1) * riser + 0.006,
         centerZ,
       ])
     : []
 
   const cleatCount = stairs ? 0 : Math.floor(flightLength / CLEAT_PITCH)
-  const cleats: Vec3[] = Array.from({ length: cleatCount }, (_, i) => {
-    const along = (i + 0.5) * CLEAT_PITCH
-    return [
-      headX + config.descent * along * Math.cos(pitch),
-      deckY - along * Math.sin(pitch),
-      centerZ,
-    ]
-  })
-
-  // The shaft has to reach the toe of the flight, which is further along than
-  // the opening; the extra is under the slab and never seen.
-  const toeX = headX + config.descent * run
-  const shaft = boxOver(
-    {
-      minX: Math.min(opening.minX, toeX) - SHAFT_MARGIN,
-      maxX: Math.max(opening.maxX, toeX) + SHAFT_MARGIN,
-      minZ: opening.minZ - SHAFT_MARGIN,
-      maxZ: opening.maxZ + SHAFT_MARGIN,
-    },
-    config.landingY,
-    deckY,
-  )
 
   return {
     id: config.id,
     kind: config.kind,
+    travel: config.travel,
     opening,
+    footprint,
+    well,
     deckY,
     landingY: config.landingY,
     headX,
+    toeX,
     descent: config.descent,
     centerZ,
     halfWidth,
-    slope,
+    rise,
+    run,
+    pitch,
+    tilt,
     flightCenter,
     flightLength,
     railCenter,
     railLength,
-    steps,
-    stepSize: [STAIR_GOING, stepDepth, config.width],
-    cleats,
-    shaft,
-    endRailCenter: [
-      config.descent > 0 ? opening.maxX : opening.minX,
-      deckY,
-      centerZ,
-    ],
+    stepCount: stairs ? stepCount : 0,
+    riser: stairs ? riser : 0,
+    nosings,
+    cleatCount,
+    body: stairs
+      ? stairBody(headX, config.descent, deckY, config.landingY, stepCount, riser)
+      : wedgeBody(headX, config.descent, deckY, config.landingY, pitch),
+    endRailCenter: [config.descent > 0 ? opening.maxX : opening.minX, deckY, centerZ],
+    beltX: stairs ? 0 : beltVelocity(config) * Math.cos(ESCALATOR_ANGLE),
   }
+}
+
+/**
+ * Along-X velocity of an escalator's steps. An up escalator's surface moves
+ * towards the head, which is back the way the flight descends; a down one, the
+ * way it descends.
+ */
+function beltVelocity(config: VerticalAccessConfig): number {
+  if (config.kind !== AccessKind.ESCALATOR || config.travel === Travel.BOTH) return 0
+  const along = config.travel === Travel.DOWN ? config.descent : -config.descent
+  return along * ESCALATOR_SPEED
+}
+
+/** The tread-by-tread profile of the solid under a staircase, head to foot. */
+function stairBody(
+  headX: number,
+  descent: 1 | -1,
+  deckY: number,
+  landingY: number,
+  stepCount: number,
+  riser: number,
+): [number, number][] {
+  const profile: [number, number][] = [
+    [headX, landingY],
+    [headX, deckY - riser],
+  ]
+
+  // Each tread runs on to the edge above the next, then drops a riser. The
+  // last tread is the hall floor and has no thickness, so the profile ends
+  // with the riser down on to it.
+  for (let step = 1; step < stepCount; step++) {
+    const x = headX + descent * step * STAIR_GOING
+    profile.push([x, deckY - step * riser], [x, deckY - (step + 1) * riser])
+  }
+
+  return profile
+}
+
+/** The solid under an escalator: a wedge whose top is the underside of the step band. */
+function wedgeBody(
+  headX: number,
+  descent: 1 | -1,
+  deckY: number,
+  landingY: number,
+  pitch: number,
+): [number, number][] {
+  const drop = ESCALATOR_BAND / Math.cos(pitch)
+  const reach = (deckY - drop - landingY) / Math.tan(pitch)
+
+  return [
+    [headX, landingY],
+    [headX, deckY - drop],
+    [headX + descent * reach, landingY],
+  ]
 }
 
 export function accessLayouts(platform: PlatformConfig, track: TrackConfig): AccessLayout[] {
@@ -205,6 +316,35 @@ export function platformDeckAreas(platform: PlatformConfig, track: TrackConfig):
     ...rect,
     floorY: deckY,
   }))
+}
+
+/**
+ * The flights themselves as floors to walk on: a slope that starts level with
+ * the deck at the head of each and falls to the hall floor at its foot.
+ *
+ * A staircase falls a tread at a time and slows whoever climbs it; an escalator
+ * falls smoothly and moves whoever stands on it. Both cover the whole flight,
+ * including the stretch under the slab that the deck's own opening does not.
+ */
+export function accessFlightAreas(platform: PlatformConfig, track: TrackConfig): WalkArea[] {
+  return accessLayouts(platform, track).map((layout) => {
+    const stairs = layout.kind === AccessKind.STAIRS
+
+    return {
+      id: `${layout.id}-flight`,
+      ...layout.footprint,
+      floorY: layout.deckY,
+      slope: {
+        fromX: layout.headX,
+        descent: layout.descent,
+        gradient: layout.rise / layout.run,
+        bottomY: layout.landingY,
+        tread: stairs ? STAIR_GOING : undefined,
+      },
+      belt: layout.beltX === 0 ? undefined : { x: layout.beltX, z: 0 },
+      pace: stairs ? STAIR_PACE : ESCALATOR_PACE,
+    }
+  })
 }
 
 /**
